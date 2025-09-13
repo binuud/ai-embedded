@@ -12,10 +12,10 @@
 
 enum CmdEnum {
   CmdEnum_ignore,
-  CmdEnum_Move,
-  CmdEnum_Servo,
-  CmdEnum_Led,
-  CmdEnum_LedStrip,
+  CmdEnum_move,
+  CmdEnum_servo,
+  CmdEnum_led,
+  CmdEnum_led_strip,
 };
 
 enum SubCmdEnum {

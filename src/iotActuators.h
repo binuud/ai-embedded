@@ -121,3 +121,9 @@ void controlServo(int servoNumber, int angle) {
   Serial.printf("Setting Servo %d, Angle %d \n", servoNumber, angle);
   servos[servoNumber].write(angle);
 }
+
+void controlLed(int ledPin, int value) {
+
+  Serial.printf("Setting Led Pin %d, value %d \n", ledPin, value);
+  digitalWrite(ledPin, value);
+}
