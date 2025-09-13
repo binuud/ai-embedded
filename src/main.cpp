@@ -7,7 +7,7 @@
 #include <iotCmd.h>
 #include "iotActuators.h"
 
-#define SERVICE_UUID          "6e400001-b5a3-f393-e0a9-e50e24dcca9e" // UART service UUID
+#define SERVICE_UUID           "6e400001-b5a3-f393-e0a9-e50e24dcca9e" // UART service UUID
 #define CHARACTERISTIC_UUID_RX "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
 #define CHARACTERISTIC_UUID_TX "6e400003-b5a3-f393-e0a9-e50e24dcca9e"
 
@@ -41,11 +41,13 @@ class MyCallbacks : public BLECharacteristicCallbacks {
     decodeCommand(data, &cmd);
     debugIotCommand(&cmd);
     
-    if (cmd.cmd == CmdEnum_Servo) {
+    if (cmd.cmd == CmdEnum_servo) {
       // handle servo
       controlServo(cmd.identifier, cmd.value1);
-    } else {
+    } else if (cmd.cmd == CmdEnum_move) {
       controlpadWithSpeed(&cmd);
+    } else if (cmd.cmd == CmdEnum_led) {
+      controlLed(cmd.identifier, cmd.value1);
     }
     
   }
@@ -115,4 +117,5 @@ void loop() {
     // do stuff here on connecting
     oldDeviceConnected = true;
   }
+
 }
