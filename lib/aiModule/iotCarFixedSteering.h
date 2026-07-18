@@ -64,6 +64,8 @@ void setSpeed(int speed) {
   }
 }
 
+
+
 void moveForward() {
   alterInBuiltLed(HIGH);
   leftMotor->setSpeed(g_speed);
@@ -100,13 +102,37 @@ void carStop() {
   Serial.println("********** Car Stop");
 }
 
+void move(int velocity, int turnStrength) {
+  alterInBuiltLed(HIGH);
+  if (velocity == 0 && turnStrength == 0) {
+    carStop();
+  } else if (turnStrength < 10  && turnStrength > -10) {
+    if (velocity > 0) {
+      setSpeed(velocity);
+      moveForward();
+    } else if (velocity < 0) {
+      setSpeed(-velocity);
+      moveBackward();
+    }
+  } else if (turnStrength > 10) {
+      setSpeed(turnStrength);
+      turnRight();
+  } else if (turnStrength < -10) {
+      setSpeed(-turnStrength);
+      turnLeft();
+  }
+
+  Serial.println("********** Move with speed, turn value");
+}
+
 void controlpadWithSpeed(IotCommand* cmd) {
   int speedInt =  cmd->value1;
-  setSpeed(speedInt);
-  if (cmd->subcmd == SubCmdEnum_move_forward) moveForward();
-  else if (cmd->subcmd == SubCmdEnum_move_backward) moveBackward();
-  else if (cmd->subcmd == SubCmdEnum_move_turn_left) turnLeft();
-  else if (cmd->subcmd == SubCmdEnum_move_turn_right) turnRight();
+  int turnValue  =  cmd->value2;
+  if (cmd->subcmd == SubCmdEnum_move) { move(speedInt, turnValue); }
+  else if (cmd->subcmd == SubCmdEnum_move_forward) { setSpeed(speedInt);moveForward();}
+  else if (cmd->subcmd == SubCmdEnum_move_backward) {setSpeed(speedInt);moveBackward();}
+  else if (cmd->subcmd == SubCmdEnum_move_turn_left) {setSpeed(speedInt);turnLeft();}
+  else if (cmd->subcmd == SubCmdEnum_move_turn_right) {setSpeed(speedInt);turnRight();}
   else if (cmd->subcmd == SubCmdEnum_move_stop) carStop();
 }
 
