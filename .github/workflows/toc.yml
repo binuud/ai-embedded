@@ -1,0 +1,28 @@
+name: Generate TOC
+
+on:
+  push:
+    paths:
+      - 'README.md'
+    branches:
+      - master
+  pull_request:
+    paths:
+      - 'README.md'
+
+jobs:
+  generateTOC:
+    name: TOC Generator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: technote-space/toc-generator@v4
+        with:
+          path: 'README.md'
+
+      - name: Commit updated TOC
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git diff --cached --exit-code || git commit -m "Update TOC in README.md"
+          git push
