@@ -2,8 +2,23 @@
 BrainUI module for Esp32 and Arduino. 
 
 <!-- TOC created by git hub actions>
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Directory Structure](#directory-structure)
+- [Geting Started](#geting-started)
+- [AT Commands Help](#at-commands-help)
+- [API Endpoints for streaming](#api-endpoints-for-streaming)
+- [Communication CMD Structure](#communication-cmd-structure)
+- [Types of Steering](#types-of-steering)
+- [Motor Driver Support](#motor-driver-support)
+- [SOC Support](#soc-support)
+- [Code Editors](#code-editors)
+- [Build Environments](#build-environments)
+- [Points to remember](#points-to-remember)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Directory Structure
 * /deviceDetails - board pinout details
