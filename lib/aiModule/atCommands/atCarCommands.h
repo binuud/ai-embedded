@@ -5,11 +5,11 @@
 #include <iotActuators.h>
 #include <serialHandler.h>
 
-#if CAR_NOSTEERING
+#if CAR_FIXED_STEERING
 #include <iotCarFixedSteering.h>
 #endif
 
-#if CAR_STEERING
+#if CAR_FLUID_STEERING
 #include <iotCarFluidSteering.h>
 #endif
 
@@ -31,9 +31,6 @@ void registerCarATCommands(SerialHandler &cmdManager) {
     cmdManager.add(carConfigCmd);
     cmdManager.add(carMoveCmd);
 }
-
-
-
 
 
 void atCmdCarConfig(const String& params) {

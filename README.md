@@ -11,9 +11,9 @@ BrainUI module for Esp32 and Arduino.
 * /sampleExamples - quick run code for Arduino.ide to test basic functionality like drivers, signalling, I2c, display boards etc
 * /partitions - csv files for EEPROM partitions
 * /src - multiple projects share this workspace, each being a child folder of /src
-* * /esp32CarWifiWithCamera - Bluetooth car control (BLE), with steering dc motor and one drive motor, with variable speed
-* * /esp32CarWifiWithCamera - Wifi Car Control, with streaming camera, differential steering, with variable speed
-* * /basicBleWifi - To check basi BLE and Wifi Configurations
+    * /esp32CarWifiWithCamera - Bluetooth car control (BLE), with steering dc motor and one drive motor, with variable speed
+    * /esp32CarWifiWithCamera - Wifi Car Control, with streaming camera, differential steering, with variable speed
+    * /basicBleWifi - To check basi BLE and Wifi Configurations
 
 ## Geting Started
 
@@ -24,6 +24,9 @@ BrainUI module for Esp32 and Arduino.
 * Build the project (Tick mark on footer of editor)
 * Connect ESP32 Dev Board, choose the device on the footer of the editor
 * Deploy the code (Right arrow mark on footer of editor)
+* [Project Info](https://binuud.com/project/smallrobots/)
+* [Access UI](https://binuud.com/staging/robot)
+    * Please note, open UI url in Google Chrome, since it needs Local Network orBluetooth access
 
 ## AT Commands Help
 TBD

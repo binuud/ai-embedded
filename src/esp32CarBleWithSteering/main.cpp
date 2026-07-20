@@ -2,20 +2,20 @@
 #define CAMERA_ENABLED 0 // if camera is enabled set to 1, else set to 0
 #define BLUETOOTH_ENABLED 1 // if bluetooth is enabled
 #define WIFI_ENABLED 0 // if bluetooth is enabled
-#define CAR_NOSTEERING 0 // if 4 motor car is enabled
-#define CAR_STEERING 1 // if car steering is required (turn and drive motor)
+#define CAR_FIXED_STEERING 0 // if 4 motor car is enabled
+#define CAR_FLUID_STEERING 1 // if car steering is required (turn and drive motor)
 
 #include <HardwareSerial.h>
 #include <iotCmd.h>
 #include <atCommands/atCommonCommands.h>
 #include <serialHandler.h>
 
-#if CAR_NOSTEERING
+#if CAR_FIXED_STEERING
 #include <atCommands/atCarCommands.h>
 #include <iotActuators.h>
 #endif
 
-#if CAR_STEERING
+#if CAR_FLUID_STEERING
 #include <atCommands/atCarCommands.h>
 #include <iotCarFluidSteering.h>
 #endif
@@ -76,11 +76,7 @@ void setup() {
   setupBle();
 #endif
 
-#if CAR_STEERING
-  registerCarATCommands(serialHandler);
-#endif
-  
-#if CAR_STEERING
+#if CAR_FLUID_STEERING || CAR_FIXED_STEERING
   registerCarATCommands(serialHandler);
 #endif
 

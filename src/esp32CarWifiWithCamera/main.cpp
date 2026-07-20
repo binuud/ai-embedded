@@ -32,7 +32,7 @@
 #endif
 
 #include <serialHandler.h>
-#include <atCommands.h>
+
 // #include "carWithCameraCommands.h"
 
 #if WIFI_ENABLED
@@ -52,7 +52,7 @@
 // Binu Udayakumar binu@dronasys.com
 // UI tools can be accessed at https://binuud.com
 
-SerialHandler serialHandler(atCommands, sizeof(atCommands) / sizeof(atCommands[0]));
+SerialHandler serialHandler(10);
 
 void setup() {
   
@@ -61,7 +61,7 @@ void setup() {
   delay(1000); // wait for serial monitor initialization
 
   Serial.println("Registering AT Commands for Common items...");
-  registerCommonATCommands(serialHandle
+  registerCommonATCommands(serialHandler);
 
   // load preferences from EEPROM
   // this has to be called first before any other initiations
@@ -91,14 +91,10 @@ void setup() {
   setupBle();
 #endif
 
-#if CAR_STEERING
+#if CAR_FLUID_STEERING || CAR_FIXED_STEERING
   registerCarATCommands(serialHandler);
 #endif
-  
-#if CAR_STEERING
-  registerCarATCommands(serialHandler);
-#endif
-  
+
   // if CAMERA is enabled, init the camera
 #if CAMERA_ENABLED 
   Serial.println("Setting Camera...");
