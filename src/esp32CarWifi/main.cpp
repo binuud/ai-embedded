@@ -1,12 +1,9 @@
 
-#define CAMERA_ENABLED 1 // if camera is enabled set to 1, else set to 0
-#define WIFI_ENABLED 1 // if bluetooth is enabled
-
+#define CAMERA_ENABLED 0 // if camera is enabled set to 1, else set to 0
 #define BLUETOOTH_ENABLED 0 // if bluetooth is enabled
-
+#define WIFI_ENABLED 1 // if bluetooth is enabled
 #define CAR_FIXED_STEERING 1 // if 4 motor car is enabled
 #define CAR_FLUID_STEERING 0 // if car steering is required (turn and drive motor)
-
 #define CAR_SERVO 0 // if servo moto is needed
 #define ACTUATORS 0 // if servo, stepper are defined
 
@@ -38,19 +35,17 @@
 
 // #include "carWithCameraCommands.h"
 
-
-#if CAMERA_ENABLED 
-#include <cameraInit.h>
-// #include <blockingCameraServer.h>
-#include <asyncCamera.h>
-#endif
-
 #if WIFI_ENABLED
 #include <wifiInit.h>
 #include <atCommands/atWifiCommands.h>
 #include <asyncWebServer.h>
 #endif
 
+#if CAMERA_ENABLED 
+#include <cameraInit.h>
+// #include <blockingCameraServer.h>
+#include <asyncCamera.h>
+#endif
 
 
 
@@ -84,6 +79,10 @@ void setup() {
   initializeActuatorIODevices();
 #endif
 
+#if CAR_FLUID_STEERING || CAR_FIXED_STEERING
+  registerCarATCommands(serialHandler);
+#endif
+
 // init wifi
 #if WIFI_ENABLED  
   Serial.println("Initializing wifi...");
@@ -97,14 +96,13 @@ void setup() {
   setupBle();
 #endif
 
-#if CAR_FLUID_STEERING || CAR_FIXED_STEERING
-  registerCarATCommands(serialHandler);
-#endif
+
 
   // if CAMERA is enabled, init the camera
 #if CAMERA_ENABLED 
   Serial.println("Setting Camera...");
   initCamera();
+  initAsyncServer();
 #endif
 
 #if WIFI_ENABLED  
