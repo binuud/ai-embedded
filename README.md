@@ -1,14 +1,29 @@
 # ai-embedded
 BrainUI module for Esp32 and Arduino. 
 
+<!-- TOC created by git hub actions>
 <!-- START doctoc -->
 <!-- END doctoc -->
 
 ## Directory Structure
-* /src
-* * /bleCar - Bluetooth car control (BLE), with steering dc motor and one drive motor, with variable speed
-* * /wifiCarCamera - Wifi Car Control, with streaming camera, differential steering, with variable speed
-* * /wifiCar - Wifi Car Control, dc motor steering, with variable speed
+* /deviceDetails - board pinout details
+* /lib - library for handling Wifi, AT commands, BLE, drivers for motors
+* /sampleExamples - quick run code for Arduino.ide to test basic functionality like drivers, signalling, I2c, display boards etc
+* /partitions - csv files for EEPROM partitions
+* /src - multiple projects share this workspace, each being a child folder of /src
+* * /esp32CarWifiWithCamera - Bluetooth car control (BLE), with steering dc motor and one drive motor, with variable speed
+* * /esp32CarWifiWithCamera - Wifi Car Control, with streaming camera, differential steering, with variable speed
+* * /basicBleWifi - To check basi BLE and Wifi Configurations
+
+## Geting Started
+
+* Clone this project
+* Use Visual Code Editor
+* Install PlatformIO IDE extension 
+* Select environment of your choice
+* Build the project (Tick mark on footer of editor)
+* Connect ESP32 Dev Board, choose the device on the footer of the editor
+* Deploy the code (Right arrow mark on footer of editor)
 
 ## AT Commands Help
 TBD
@@ -46,6 +61,13 @@ TBD
 * Visual Code with Plaform IO extension is best. 
 * Arduino IDE is best for uploading small test modules. 
 * Anything serious, would need multiple library support, and you will soon encounter build support for different board types. Visual Code + Platform IO makes this a breeze.
+
+## Build Environments
+
+* esp32cam - Async WiFi, Camera Streaming, GPIO control via http get request (working)
+* nodemcu-32s-carBLE - Bluetooth (BLE), Differential Steering Car. ESP32 Board (working)
+* dfrobot_romeo_esp32s3 - dfrobot board with camera - not working as expected  ( do not use )
+* nodemcu-32s - placeholder ( do not use )
 
 ## Points to remember
 

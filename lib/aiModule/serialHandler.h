@@ -14,21 +14,42 @@
 
 
 class SerialHandler {
+private:
+    static const int MAX_COMMANDS = 10; // Adjust memory ceiling here
+    AtCommand atCommands[MAX_COMMANDS];
+    int _count;
+
 public:
-    AtCommand* atCommands;
-    int atCommandCount;
 
-    SerialHandler(AtCommand atCommandsArray[], int count) {
-        atCommands = atCommandsArray;
-        atCommandCount = count;
 
+    // SerialHandler(AtCommand atCommandsArray[], int count) {
+    //     atCommands = atCommandsArray;
+    //     atCommandCount = count;
+    // }
+
+    SerialHandler(int count) {
+        
+    }
+
+
+
+    // Method to push an instance of a command into the collection
+    bool add(AtCommand cmd) {
+        if (_count < MAX_COMMANDS) {
+            atCommands[_count] = cmd;
+            _count++;
+            return true;
+        }
+        return false; // Out of memory space
     }
 
     void help() {
 
-        Serial.printf("Available commands  %d :", atCommandCount);
+        Serial.printf("Available Registered commands  %d :", _count);
         Serial.println("  AT? -- help message");
-        for (int i = 0; i < atCommandCount; i++) {
+        Serial.println("  All set commands will have the AT command followed by = symbol and values");
+        Serial.println("  All read commands will have just the AT command without any further symbols or values");
+        for (int i = 0; i < _count; i++) {
             Serial.println(String("  AT+") + atCommands[i].name + "=<params>");
             Serial.println(String("    Desc: ") + atCommands[i].desc);
         }
@@ -69,7 +90,7 @@ public:
             cmdLine.toUpperCase();  // Convert cmdName to lowercase
             // Find command in atCommands array
             bool handled = false;
-            for (int i = 0; i < atCommandCount; i++) {
+            for (int i = 0; i < MAX_COMMANDS; i++) {
                 String cmdName = atCommands[i].name;
 
                 if (cmdLine.startsWith(cmdName)) {

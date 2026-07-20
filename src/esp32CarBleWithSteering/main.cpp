@@ -1,51 +1,48 @@
 
-#define CAMERA_ENABLED 1 // if camera is enabled set to 1, else set to 0
-#define BLUETOOTH_ENABLED 0 // if bluetooth is enabled
-#define WIFI_ENABLED 1 // if bluetooth is enabled
-#define CAR_FIXED_STEERING 1 // if 4 motor car is enabled
-#define CAR_FLUID_STEERING 0 // if car steering is required (turn and drive motor)
-#define CAR_SERVO 0 // if servo moto is needed
-#define ACTUATORS 0 // if servo, stepper are defined
+#define CAMERA_ENABLED 0 // if camera is enabled set to 1, else set to 0
+#define BLUETOOTH_ENABLED 1 // if bluetooth is enabled
+#define WIFI_ENABLED 0 // if bluetooth is enabled
+#define CAR_NOSTEERING 0 // if 4 motor car is enabled
+#define CAR_STEERING 1 // if car steering is required (turn and drive motor)
 
 #include <HardwareSerial.h>
 #include <iotCmd.h>
+#include <atCommands/atCommonCommands.h>
+#include <serialHandler.h>
 
-#if ACTUATORS
+#if CAR_NOSTEERING
+#include <atCommands/atCarCommands.h>
 #include <iotActuators.h>
 #endif
 
-#if CAR_FIXED_STEERING
-#include <iotCarFixedSteering.h>
-#endif
-
-#if CAR_FLUID_STEERING
+#if CAR_STEERING
+#include <atCommands/atCarCommands.h>
 #include <iotCarFluidSteering.h>
 #endif
 
 #if BLUETOOTH_ENABLED 
+#include <atCommands/atBleCommands.h>
 #include <bleConfig.h> 
 #endif
 
-#include <serialHandler.h>
-#include "carWithCameraCommands.h"
+
+
 
 #if WIFI_ENABLED
+#include <atCommands/atWifiCommands.h>
 #include <wifiInit.h>
 #endif
 
 #if CAMERA_ENABLED 
 #include <cameraInit.h>
-// #include <blockingCameraServer.h>
-#include <asyncCamera.h>
 #endif
-
 
 
 
 // Binu Udayakumar binu@dronasys.com
 // UI tools can be accessed at https://binuud.com
 
-SerialHandler serialHandler(atCommands, sizeof(atCommands) / sizeof(atCommands[0]));
+SerialHandler serialHandler(10);
 
 void setup() {
   
@@ -55,6 +52,10 @@ void setup() {
   // load preferences from EEPROM
   // this has to be called first before any other initiations
   // since we are storing pinout information here
+
+  Serial.println("Registering AT Commands for Common items...");
+  registerCommonATCommands(serialHandler);
+
   Serial.println("Loading Prefs...");
   DeviceConfig config = devicePrefs.loadConfig();
 
@@ -62,27 +63,32 @@ void setup() {
   Serial.println("Initializing Devices...");
   initializeIODevices(devicePrefs.devices);
 
-#if ACTUATORS
-  initializeActuatorIODevices();
-#endif
-
-// init wifi
+  // init wifi
 #if WIFI_ENABLED  
   Serial.println("Initializing wifi...");
+  registerWifiATCommands(serialHandler);
   initWifi(devicePrefs.config.wifi_ssid, devicePrefs.config.wifi_password);
 #endif
 
 #if BLUETOOTH_ENABLED    
   Serial.println("Setting Bluetooth...");
+  registerBleATCommands(serialHandler);
   setupBle();
 #endif
 
+#if CAR_STEERING
+  registerCarATCommands(serialHandler);
+#endif
   
+#if CAR_STEERING
+  registerCarATCommands(serialHandler);
+#endif
+
   // if CAMERA is enabled, init the camera
 #if CAMERA_ENABLED 
   Serial.println("Setting Camera...");
   initCamera();
-  initAsyncServer();
+  camera_httpd = start_camera_server();
 #endif
 
   serialHandler.help(); // print al the AT-Commands
@@ -101,14 +107,11 @@ void loop() {
   // and invoke the same
   serialHandler.loop();
 
-  // run ble loop()
 #if BLUETOOTH_ENABLED   
   loopBle();
 #endif  
 
-#if ACTUATORS
   // run stepper, motors and servo
   loopActuator();
-#endif  
-
+  
 }
