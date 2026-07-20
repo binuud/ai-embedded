@@ -2,7 +2,7 @@
 #define WIFI_INIT_H
 
 #include <WiFi.h>
-#include <cameraInit.h>
+
 
 #define PART_BOUNDARY "123456789000000000000987654321"
 
@@ -35,23 +35,27 @@ void connectToWiFi(const char* ssid, const char* password) {
   }
 }
 
+void printWifiStatus() {
+  if (WiFi.status() == WL_CONNECTED) {
+      Serial.printf("Wifi Connected with IP address %s\n", WiFi.localIP().toString().c_str());
+  } else {
+      Serial.println("Wifi Not connected, please check credentials or firewall. Stored credentials failed. Please enter new credentials.");
+  }
+}
 
 void initWifi(String ssid, String password) {
 
   if (ssid.length() >0 && password.length() > 0) {
     Serial.println("Found saved WiFi credentials.");
     connectToWiFi(ssid.c_str(), password.c_str());
-
-    if (WiFi.status() == WL_CONNECTED) {
-        return;
-    } else {
-        Serial.println("Stored credentials failed. Please enter new credentials.");
-    }
+    printWifiStatus();
   } else {
     Serial.println("No WiFi credentials found. Please enter:");
   }
 
 }
+
+
 
 
 #endif // WIFI_INIT_H
