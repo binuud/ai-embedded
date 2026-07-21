@@ -41,8 +41,15 @@ const char* PARAM_INPUT_5 = "value2";
 // Helper function to add CORS headers to a response
 void addCORSHeaders(AsyncWebServerResponse *response) {
     response->addHeader("Access-Control-Allow-Origin", "*");
+    response->addHeader("Access-Control-Allow-Private-Network", "true");
     response->addHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     response->addHeader("Access-Control-Allow-Headers", "Content-Type");
+}
+
+void sendCorsResponse(AsyncWebServerRequest *request, int status, char* result) {
+  AsyncWebServerResponse *response = request->beginResponse(status, "application/json", result);
+  addCORSHeaders(response);
+  request->send(response);
 }
 
 void initAsyncServer() {
@@ -76,25 +83,22 @@ void initAsyncServer() {
       String value2 = request->getParam(PARAM_INPUT_5)->value();
       Serial.printf("GPIO: cmd %s : subcmd %s id (%s) val1:(%s) val2:(%s)\n", subCmd, subCmd, identifier, value1, value2);
 
-        IotCommand cmd;
-        cmd.cmd = static_cast<DeviceCategory>(inpCmd.toInt());
-        cmd.subcmd = static_cast<SubCmdEnum>(subCmd.toInt());
-        cmd.identifier = identifier.toInt();
-        cmd.value1 = value1.toInt();
-        cmd.value2 = value2.toInt();
-         debugIotCommand(&cmd);
-        controlpadWithSpeed(&cmd);
-    }
-    else {
+      // send response, so the client can close the connection
+      sendCorsResponse(request, 200,  "{\"status\":\"success\"}");
 
-    }
-    
+      IotCommand cmd;
+      cmd.cmd = static_cast<DeviceCategory>(inpCmd.toInt());
+      cmd.subcmd = static_cast<SubCmdEnum>(subCmd.toInt());
+      cmd.identifier = identifier.toInt();
+      cmd.value1 = value1.toInt();
+      cmd.value2 = value2.toInt();
+        //  debugIotCommand(&cmd);
+      controlpadWithSpeed(&cmd);
 
-    
-    AsyncWebServerResponse *response = request->beginResponse(200, "application/json", "{\"status\":\"success\"}");
-    addCORSHeaders(response);
-    response->addHeader("Access-Control-Allow-Origin", "*");
-    request->send(response);
+      return;
+    }
+
+    sendCorsResponse(request, 400,  "{\"status\":\"command not found\"}");
   });
 
 #if CAMERA_ENABLED 
