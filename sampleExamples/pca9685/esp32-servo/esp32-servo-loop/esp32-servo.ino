@@ -1,6 +1,7 @@
 /*
 Checking if PCA9685 can be used to control servo motors drivers
 Working, as on 11 Aug 2026
+Simple looping program, that changes angles of 2 servos, connected at position 7 and 12 on PCA9685
 */
  
 // Include Wire Library for I2C
