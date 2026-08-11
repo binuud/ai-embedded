@@ -1,6 +1,6 @@
 
 #define CAMERA_ENABLED 0 // if camera is enabled set to 1, else set to 0
-#define BLUETOOTH_ENABLED 0 // if bluetooth is enabled
+#define BLUETOOTH_ENABLED 1 // if bluetooth is enabled
 #define WIFI_ENABLED 1 // if bluetooth is enabled
 #define CAR_FIXED_STEERING 1 // if 4 motor car is enabled
 #define CAR_FLUID_STEERING 0 // if car steering is required (turn and drive motor)

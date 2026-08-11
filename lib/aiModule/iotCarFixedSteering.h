@@ -13,8 +13,8 @@
 // function headers
 void configCar(int motorA1, int  motorA2, int motorB1, int  motorB2);
 
-
-
+#define ROBOT_WIDTH 10
+#define WHEEL_DIAMETER 2.5
 // Car motors
 CytronMD* leftMotor = nullptr;
 CytronMD* rightMotor = nullptr;
@@ -64,7 +64,12 @@ void setSpeed(int speed) {
   }
 }
 
-
+void moveWheels(int vl, int vr) {
+  alterInBuiltLed(HIGH);
+  leftMotor->setSpeed(vl);
+  rightMotor->setSpeed(vr);
+  Serial.println("********** Move with vector");
+}
 
 void moveForward() {
   alterInBuiltLed(HIGH);
@@ -125,10 +130,28 @@ void move(int velocity, int turnStrength) {
   Serial.println("********** Move with speed, turn value");
 }
 
+void moveWithVector(int speed, int angle) {
+  alterInBuiltLed(HIGH);
+  if (speed == 0 && angle == 0) {
+    carStop();
+  } else {
+    // Calculate left and right wheel speeds using inverse kinematic equations
+    float v_left = (speed - angle * ROBOT_WIDTH) / (WHEEL_DIAMETER/2);//(rad/s)
+    // v_left= v_left*(60/(2*M_PI));//(RPM)
+    float v_right =(speed + angle * ROBOT_WIDTH) / (WHEEL_DIAMETER/2);//(rad/s)
+    // v_right= v_right*(60/(2*M_PI));//(RPM)
+    Serial.printf("Calculated vl(%3.5f) vr(%3.5f)", v_left, v_right);
+    moveWheels((int)v_left, (int)v_right);
+  }
+
+  Serial.println("********** Move with speed, turn value");
+}
+
 void controlpadWithSpeed(IotCommand* cmd) {
   int speedInt =  cmd->value1;
   int turnValue  =  cmd->value2;
-  if (cmd->subcmd == SubCmdEnum_move) { move(speedInt, turnValue); }
+  if (cmd->subcmd == SubCmdEnum_vec_move) { moveWithVector(speedInt, turnValue); }
+  else if (cmd->subcmd == SubCmdEnum_move) { move(speedInt, turnValue); }
   else if (cmd->subcmd == SubCmdEnum_move_forward) { setSpeed(speedInt);moveForward();}
   else if (cmd->subcmd == SubCmdEnum_move_backward) {setSpeed(speedInt);moveBackward();}
   else if (cmd->subcmd == SubCmdEnum_move_turn_left) {setSpeed(speedInt);turnLeft();}
