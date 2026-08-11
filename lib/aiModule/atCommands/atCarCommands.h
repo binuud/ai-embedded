@@ -15,7 +15,7 @@
 
 void atCmdCarConfig(const String& args);
 void atCmdCarMove(const String& args);
-
+void atCmdCarVector(const String& args);
 void atReadCarConfig();
 void atReadCarMove();
 
@@ -27,9 +27,11 @@ void registerCarATCommands(SerialHandler &cmdManager) {
         
     AtCommand carConfigCmd =  {"CAR", "Config Car control Pins, eg: AT+CAR=[MotorLeft+], [MotorLeft-], [MotorRight+], [MotorRight-]" , atCmdCarConfig, atReadCarConfig};
     AtCommand carMoveCmd =  {"MOVE", "Move car, AT+MOVE=[+-]SPEED,[+-], eg: AT+MOVE=50,50 will move card forward and turn right, AT+MOVE=-50,0 will move car back", atCmdCarMove, atReadCarMove};
+    AtCommand carVecMoveCmd =  {"VECMOVE", "Move car, AT+VECMOVE=[+-]VECTOR,[+-]ANGLE, eg: AT+MOVE=50,50 will move card forward and turn right, AT+VECMOVE=-50,0 will move car back", atCmdCarVector, atReadCarMove};
     // Push them into the manager instance
     cmdManager.add(carConfigCmd);
     cmdManager.add(carMoveCmd);
+    cmdManager.add(carVecMoveCmd);
 }
 
 
@@ -77,40 +79,36 @@ void atCmdCarMove(const String& params) {
                 move(speed, turn); 
             }
             Serial.printf("Car command speed %d, turn  %d \n", speed, turn);
-        } else {
-            Serial.println("ERROR: Invalid format");
-            Serial.println("ERROR: invalid params, AT+MOVE=SPEED,TURN eg: AT+MOVE=50,0");
-        }
-    } else {
-        Serial.println("ERROR: invalid params, AT+MOVE=SPEED,TURN eg: AT+MOVE=50,0");
-    }    
+            return;
+        } 
+    }
+        
+    Serial.println("ERROR: invalid params, AT+MOVE=SPEED,TURN eg: AT+MOVE=50,0");
+        
 }
 
-
-// void atCmdCarMove(const String& params) {
-//     if (params.length() > 0) {
-//         String parts[2]; // adjust size as needed
-//         int numParts = splitString(params, ',', parts, 2);
-//         if (numParts == 2) {
-//             String action = parts[0];
-//             action.toUpperCase();   
-//             int speed = parts[1].toInt();
-//             if (speed > 100) speed = 100;
-//             if (speed < 0) speed = 0;
-//             setSpeed(speed);
-//             Serial.printf("Car command %s, %d \n", action, speed);
-//             if (action == "W") move(speed, 0); 
-//             else if (action == "S") move(-speed, 0);
-//             else if (action == "A") move(0, -100);
-//             else if (action == "D") move(0, 100);
-//             else if (action == "Z") carStop();
-//         } else {
-//             Serial.println("ERROR: Invalid format");
-//         }
-//     } else {
-//         Serial.println("ERROR: invalid params, format Direction[WASDZ], speed");
-//     }    
-// }
+// atCmdCarVector
+// vector based movement, received 2 entries, first one is velocity and second is angular vector
+void atCmdCarVector(const String& params) {
+    if (params.length() > 0) {
+        String parts[2]; // adjust size as needed
+        int numParts = splitString(params, ',', parts, 2);
+        if (numParts == 2) {
+ 
+            int velocity = parts[0].toInt();
+            // if (velocity > 100) velocity = 100;
+            // if (velocity < -100) velocity = -100;
+            int angular = parts[1].toInt();
+            // if (angular > 100) angular = 100;
+            // if (angular < -100) angular = -100;
+            moveWithVector(velocity, angular);
+            Serial.printf("Car command vecolity %d, angle  %d \n", velocity, angular);
+            return;
+        } 
+    } 
+    Serial.println("ERROR: invalid params, AT+VECMOVE=VELOCITY,ANGLE eg: AT+VECMOVE=50,0");
+       
+}
 
 void atReadCarMove() {
     Serial.print("Not Implemented : \n");    

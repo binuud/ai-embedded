@@ -23,6 +23,7 @@ enum DeviceCategory   {
 
 enum SubCmdEnum   {
   SubCmdEnum_ignore,
+  SubCmdEnum_vec_move, // vector move
   SubCmdEnum_move,  // get value 1 for forward (positive), backward speed (negative)
                     // get value 2 for steer right (positive), steer left (negative)
   SubCmdEnum_move_forward,
