@@ -1,6 +1,6 @@
 /*
-Checking if PCA9685 can be used to control servo motors drivers
-Working, as on 11 Aug 2026
+Checking if PCA9685 can be used to control motor drivers
+Here for testing I am using cyton driver, 0 to 255 PWM
 */
  
 // Include Wire Library for I2C
@@ -16,16 +16,20 @@ Adafruit_PWMServoDriver pca9685 = Adafruit_PWMServoDriver(0x40);
 // Range from 0 to 255, PCA9685 supports in range  0 to 4095
 // This determines the pulse width
  
+#define MOTORMIN  0  // Minimum value
+#define MOTORMAX  250  // Maximum value
+ 
 #define SERVOMIN  125  // Minimum value
 #define SERVOMAX  575  // Maximum value
 
 // Define servo motor connections (expand as required)
-#define SER0  7   //Servo Motor 0 on connector 7
-#define SER1  11  //Servo Motor 1 on connector 11
+#define SER0  7   //Servo Motor 0 on connector 0
+#define SER1  11  //Servo Motor 1 on connector 12
 
 #define I2C_SDA 21
 #define I2C_SCL 22
-
+#define ESP32_SCL 22
+#define ESP32_SDA 21
 
 // Variables for Servo Motor positions (expand as required)
 int pwm0;
