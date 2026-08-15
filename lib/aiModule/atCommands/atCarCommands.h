@@ -5,11 +5,11 @@
 #include <iotActuators.h>
 #include <serialHandler.h>
 
-#if CAR_FIXED_STEERING
-#include <iotCarFixedSteering.h>
+#if CAR_DIFFERENTIAL_DRIVE
+#include <iotCarDifferentialDrive.h>
 #endif
 
-#if CAR_FLUID_STEERING
+#if CAR_DIFFERENTIAL_DRIVE
 #include <iotCarFluidSteering.h>
 #endif
 
@@ -18,7 +18,7 @@ void atCmdCarMove(const String& args);
 void atCmdCarVector(const String& args);
 void atReadCarConfig();
 void atReadCarMove();
-
+void atReadCarStatus();
 
 // 2. A separate module initialization function that populates your command class instance
 void registerCarATCommands(SerialHandler &cmdManager) {
@@ -28,10 +28,13 @@ void registerCarATCommands(SerialHandler &cmdManager) {
     AtCommand carConfigCmd =  {"CAR", "Config Car control Pins, eg: AT+CAR=[MotorLeft+], [MotorLeft-], [MotorRight+], [MotorRight-]" , atCmdCarConfig, atReadCarConfig};
     AtCommand carMoveCmd =  {"MOVE", "Move car, AT+MOVE=[+-]SPEED,[+-], eg: AT+MOVE=50,50 will move card forward and turn right, AT+MOVE=-50,0 will move car back", atCmdCarMove, atReadCarMove};
     AtCommand carVecMoveCmd =  {"VECMOVE", "Move car, AT+VECMOVE=[+-]VECTOR,[+-]ANGLE, eg: AT+MOVE=50,50 will move card forward and turn right, AT+VECMOVE=-50,0 will move car back", atCmdCarVector, atReadCarMove};
+    AtCommand carStatusCmd =  {"CARSTATUS", "Car Status, AT+CARSTATUS=", nullptr, atReadCarStatus};
+    
     // Push them into the manager instance
     cmdManager.add(carConfigCmd);
     cmdManager.add(carMoveCmd);
     cmdManager.add(carVecMoveCmd);
+    cmdManager.add(carStatusCmd);
 }
 
 
@@ -108,6 +111,10 @@ void atCmdCarVector(const String& params) {
     } 
     Serial.println("ERROR: invalid params, AT+VECMOVE=VELOCITY,ANGLE eg: AT+VECMOVE=50,0");
        
+}
+
+void atReadCarStatus() {
+    Serial.printf("Compass reading %3.2f", getCompassReading());
 }
 
 void atReadCarMove() {

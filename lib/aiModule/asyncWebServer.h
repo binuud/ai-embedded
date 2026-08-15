@@ -6,8 +6,8 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 
-#if CAR_FIXED_STEERING
-#include <iotCarFixedSteering.h>
+#if CAR_DIFFERENTIAL_DRIVE
+#include <iotCarDifferentialDrive.h>
 #endif
 
 #if CAR_FLUID_STEERING
