@@ -1,11 +1,16 @@
+// if bluetooth is enabled
+#define BLUETOOTH_ENABLED 1 
 
-#define CAMERA_ENABLED 0 // if camera is enabled set to 1, else set to 0
-#define BLUETOOTH_ENABLED 1 // if bluetooth is enabled
-#define WIFI_ENABLED 1 // if bluetooth is enabled
-#define CAR_FIXED_STEERING 1 // if 4 motor car is enabled
+// if wifi is enabled
+#define WIFI_ENABLED 1 
+
+// if 4 or 2 differential drive motor car is enabled, steering by rotating wheels in Clock wise, anti clock wise.
+#define CAR_DIFFERENTIAL_DRIVE 1 
+
 #define CAR_FLUID_STEERING 0 // if car steering is required (turn and drive motor)
 #define CAR_SERVO 0 // if servo moto is needed
 #define ACTUATORS 0 // if servo, stepper are defined
+#define COMPASS_ENABLED 0 // if compass, BMM 150 is enabled
 
 #include <HardwareSerial.h>
 #include <iotCmd.h>
@@ -16,9 +21,9 @@
 #include <iotActuators.h>
 #endif
 
-#if CAR_FIXED_STEERING
+#if CAR_DIFFERENTIAL_DRIVE
 #include <atCommands/atCarCommands.h>
-#include <iotCarFixedSteering.h>
+#include <iotCarDifferentialDrive.h>
 #endif
 
 #if CAR_FLUID_STEERING
@@ -41,11 +46,6 @@
 #include <asyncWebServer.h>
 #endif
 
-#if CAMERA_ENABLED 
-#include <cameraInit.h>
-// #include <blockingCameraServer.h>
-#include <asyncCamera.h>
-#endif
 
 
 
@@ -56,10 +56,12 @@
 SerialHandler serialHandler(10);
 
 void setup() {
+
   
   Serial.begin(115200);
   Serial.println("Setup Begin...");
   delay(1000); // wait for serial monitor initialization
+
 
   Serial.println("Registering AT Commands for Common items...");
   registerCommonATCommands(serialHandler);
@@ -79,7 +81,8 @@ void setup() {
   initializeActuatorIODevices();
 #endif
 
-#if CAR_FLUID_STEERING || CAR_FIXED_STEERING
+#if CAR_FLUID_STEERING || CAR_DIFFERENTIAL_DRIVE
+  initCar();
   registerCarATCommands(serialHandler);
 #endif
 
@@ -97,16 +100,14 @@ void setup() {
 #endif
 
 
-
-  // if CAMERA is enabled, init the camera
-#if CAMERA_ENABLED 
-  Serial.println("Setting Camera...");
-  initCamera();
-  initAsyncServer();
-#endif
-
 #if WIFI_ENABLED  
-  initAsyncServer();
+  if (WiFi.status() == WL_CONNECTED)  {
+    Serial.println("Setting initAsyncServer...");   
+    initAsyncServer();
+  } else {
+    Serial.println("Cannot start AsyncServer, wifi not working");  
+  }
+
 #endif
 
   serialHandler.help(); // print al the AT-Commands
@@ -134,5 +135,9 @@ void loop() {
   // run stepper, motors and servo
   loopActuator();
 #endif  
+
+
+  // move car to requested position and angle
+  carLoop();
 
 }
