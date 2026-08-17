@@ -17,6 +17,7 @@ BrainUI module for Esp32 and Arduino.
 - [Code Editors](#code-editors)
 - [Build Environments](#build-environments)
 - [Points to remember](#points-to-remember)
+- [Http commands](#http-commands)
 - [External references](#external-references)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -97,6 +98,11 @@ TBD
 * AI-Camera modules start stuttering when used with GPIO pins. Use ESP httpd server for unblocking gpio access when streaming video. Use web async for creating web server. This enables non blocking streaming of camera and control of GPIO.
 * Do not use EPS32 cheap modules, they are very slow. They clock at 40 to 80mhz. When buying modules, make sure the dev board comes with USB C connector. Having external programmer is painful when prototyping. Since modern laptops have limited USB ports, having all your devices support USB C will decrease confusion with cables in future. 
 * The USB C port can be used for communication with other devices too. 
+
+## Http commands
+```
+http://192.168.0.152/update?cmd=2&subCmd=1&identifier=1&value1=60&value2=0
+```
 
 ## External references
 * https://github.com/leonardoAB1/mobile_robot_esp32/tree/main [For inverse kinematics to control rover]

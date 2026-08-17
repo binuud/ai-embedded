@@ -18,6 +18,7 @@ void initWifi(String ssid, String password);
 void connectToWiFi(const char* ssid, const char* password) {
 
   WiFi.begin(ssid, password);
+  // WiFi.setSleep(WIFI_PS_NONE); 
   Serial.printf("Connecting to WiFi: %s\n", ssid);
   int retries = 0;
   while (WiFi.status() != WL_CONNECTED && retries < 20) {
