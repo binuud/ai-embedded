@@ -17,6 +17,7 @@ BrainUI module for Esp32 and Arduino.
 - [Code Editors](#code-editors)
 - [Build Environments](#build-environments)
 - [Points to remember](#points-to-remember)
+- [Http commands](#http-commands)
 - [External references](#external-references)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
