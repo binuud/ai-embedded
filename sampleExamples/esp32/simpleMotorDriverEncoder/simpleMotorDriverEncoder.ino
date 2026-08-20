@@ -1,17 +1,30 @@
-// in arduino UNO only pins 2, 3 can be used for interrupt
+#define ESP_BOARD 0
+#define ARDUINO_BOARD 1
+
+#if ESP_BOARD
+
+const int encoderPinA = 5; // Interrupt pin
+const int encoderPinB = 18; // Direction pin
+
+const int pinF = 16;
+const int pinB = 17;
+
+#endif
+
+
+#if ARDUINO_BOARD
 
 const int encoderPinA = 2; // Interrupt pin
-const int encoderPinB = 3; // Direction pin
+const int encoderPinB = 4; // Direction pin
 
+const int pinF = 7;
+const int pinB = 6;
 
-
-const int motorF = 5;
-const int motorB = 6;
-
+#endif
 
 
 static int speed = 50;
-static char lastKey = "";
+static char *lastKey = "";
 
 // 0 stop
 // 1 forward
@@ -20,7 +33,7 @@ static int lastMove = 0;
 
 volatile long encoderValue = 0;
 long lastEncoderValue = -1;
-
+int lastStateA;
 
 
 // --- CHANGE THIS VALUE TO MATCH YOUR MOTOR'S CPR ---
@@ -30,7 +43,7 @@ const long targetCounts = CPR * targetRotations;
 
 void updateEncoderA() {
 
-
+  int stateB = digitalRead(encoderPinB);
   if (lastMove == 1) {
     encoderValue++; // Clockwise
   } else if (lastMove == 2) {
@@ -41,7 +54,7 @@ void updateEncoderA() {
 
 void updateEncoderB() {
 
-
+  int stateA = digitalRead(encoderPinA);
   if (lastMove == 1) {
     encoderValue++; // Clockwise
   } else if (lastMove == 2) {
@@ -52,23 +65,20 @@ void updateEncoderB() {
 void setup() {
 
 
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(encoderPinA, INPUT);
   pinMode(encoderPinB, INPUT);
   
-
+  lastStateA = digitalRead(encoderPinA);
   attachInterrupt(digitalPinToInterrupt(encoderPinB), updateEncoderB, CHANGE);
   attachInterrupt(digitalPinToInterrupt(encoderPinA), updateEncoderA, CHANGE);
 
   // Configure GPIO pins as outputs
-  pinMode(motorF, OUTPUT);
-  pinMode(motorB, OUTPUT);
+  pinMode(pinF, OUTPUT);
+  pinMode(pinB, OUTPUT);
   
   // Ensure pins start 0
   stopMotor();
-  delay(500);
-  Serial.println("Welcome, simple encoder motor driver ");
-  Serial.print("Encoder Pins: ");Serial.print(encoderPinA);Serial.print(", ");Serial.println(encoderPinB);
   Serial.println("w for forward drive, e for backward, s for stop");
   Serial.println("> increase speed by 20, < decrease speed by 20");
 
@@ -76,8 +86,8 @@ void setup() {
 
 
 void stopMotor() {
-  analogWrite(motorF, 0);
-  analogWrite(motorB, 0);
+  analogWrite(pinF, 0);
+  analogWrite(pinB, 0);
   encoderValue = 0;
 
 
@@ -121,15 +131,15 @@ void handleSerialInput() {
       stopMotor();
     } else if (lastMove == 1) {
       // move forward
-      analogWrite(motorB, 0);
-      analogWrite(motorF, speed);
+      analogWrite(pinB, 0);
+      analogWrite(pinF, speed);
       
       Serial.print("Move forward ");
       Serial.println(speed);
     } else if (lastMove == 2) {
       // move forward
-      analogWrite(motorF, 0);
-      analogWrite(motorB, speed);
+      analogWrite(pinF, 0);
+      analogWrite(pinB, speed);
       
       Serial.print("Move backward ");
       Serial.println(speed);
@@ -147,8 +157,6 @@ void loop() {
   // Check if target is met (accounts for potential minor overshoot)
   if (abs(encoderValue) >= targetCounts) {
     stopMotor();
-    Serial.print("Encoder Count: ");
-    Serial.println(encoderValue);
     Serial.println("Target reached! Motor stopped.");
   }
   handleSerialInput();
