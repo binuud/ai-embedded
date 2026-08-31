@@ -104,6 +104,7 @@ void atCmdCarVector(const String& params) {
             int angular = parts[1].toInt();
             // if (angular > 100) angular = 100;
             // if (angular < -100) angular = -100;
+
             moveWithVector(velocity, angular);
             Serial.printf("Car command vecolity %d, angle  %d \n", velocity, angular);
             return;

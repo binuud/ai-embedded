@@ -10,7 +10,7 @@
 #define CAR_FLUID_STEERING 0 // if car steering is required (turn and drive motor)
 #define CAR_SERVO 0 // if servo moto is needed
 #define ACTUATORS 0 // if servo, stepper are defined
-#define COMPASS_ENABLED 0 // if compass, BMM 150 is enabled
+#define COMPASS_ENABLED 1 // if compass, BMM 150 is enabled
 
 #include <HardwareSerial.h>
 #include <iotCmd.h>

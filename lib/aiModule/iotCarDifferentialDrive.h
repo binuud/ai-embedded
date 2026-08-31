@@ -39,6 +39,11 @@ void configCar(int motorA1, int  motorA2, int motorB1, int  motorB2);
 CytronMD* leftMotor = nullptr;
 CytronMD* rightMotor = nullptr;
 
+// car lock to angle is only enabled when this is set to true
+// else the car vector command will not work
+// to set car angle alone, set velocity to 0, and angle to the corresponding angle the car has to turn
+bool ANGLE_PID = false;
+
 // when we started, we had a different UI command flow to trigger speed. Now speed and movement is via same IotCmd object
 // will be deprecated
 int g_speed = 125; 
@@ -162,10 +167,21 @@ void move(int velocity, int turnStrength) {
   Serial.println("********** Move with speed, turn value");
 }
 
+void setCarAngle(float angle) {
+  ANGLE_PID = true;
+  targetAngle = angle;
+  Serial.printf("Setting target angle %.2f, PID bool %s \n ", angle, (bool)ANGLE_PID ? "true" : "false");
+}
+
 void moveWithVector(int speed, int angle) {
+
   alterInBuiltLed(HIGH);
+
   if (speed == 0 && angle == 0) {
     carStop();
+  } else if (speed == 0 && angle !=0 ) {
+    // if only angle is sent
+    setCarAngle(angle);
   } else {
     targetAngle += angle;
     // Calculate left and right wheel speeds using inverse kinematic equations
@@ -211,6 +227,9 @@ void configCar(int motorA1, int  motorA2, int motorB1, int  motorB2) {
 void carLoop() {
 
 #if COMPASS_ENABLED
+  // return if angle PID check is false,
+  // we only want the car to turn when 
+  if (ANGLE_PID == false) return;
   // Compute error normalized between -180 and +180 degrees
   float currentAngle = getCompassReading();
   float error = targetAngle - currentAngle;
@@ -221,11 +240,14 @@ void carLoop() {
   if (abs(error) > ANGLE_TOLERANCE) {
     turnToAngle();
   } else {
+    ANGLE_PID = false;
     carStop();
   }
 #endif
 
 }
+
+
 
 void turnToAngle() {
 
